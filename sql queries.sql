@@ -136,12 +136,70 @@ select book_volume,count(book_name)as no_of_books_in_volume from books_details g
 
  select author_name,min(book_price)as lowest_book_price_by_author from books_details group by author_name having lowest_book_price_by_author<1000;
  
+ select *from books_details;
+ delete from books_details where book_id=2;
+ delete from books_details where book_id=4;
+ rollback;
+ 
+select max(book_price) from books_details;
+
+select*from books_details where book_price=1800;
+-- dynamic method
+select*from books_details where book_price=(select max(book_price) from books_details);
+
+-- second highest book price from table
+select max(book_price) as second_highest_book_price from books_details where book_price<(select max(book_price) from books_details);
+-- third highest book cost
+
+select max(book_price) as third_highest_book_price from books_details where book_price <
+(select max(book_price) as second_highest_book_price from books_details where book_price<(select max(book_price) from books_details));
  
  
+ -- get highest and second highest cost book details
+  select *from books_details;
+ select*from books_details where book_price in(1800,1500.5);
+ -- alternate method
  
+ select*from books_details where book_price in((select max(book_price)from books_details),1500.5);
  
+ -- dynamic method
  
+ select*from books_details where book_price in((select max(book_price)from books_details),(select max(book_price) as second_highest_book_price from books_details where book_price<(select max(book_price) from books_details))); 
  
+ -- details of book which has price greater than average
+ 
+ select avg(book_price)from books_details;
+ 
+  select*from books_details where book_price>(select avg(book_price)from books_details);
+  
+  -- details of book by book name which has publish year greater than 2005
+  
+  select * from books_details where book_name in((select book_name from books_details group by Publish_Year having Publish_Year>2005));
+ 
+ CREATE TABLE Books(
+Book_Id TINYINT,
+Book_Name VARCHAR(20),
+Author_Name VARCHAR(30),
+Book_Price FLOAT,
+Publish_Year YEAR,
+Book_Volume CHAR(10)
+);
+select*from books;
+insert into books select*from books_details where book_name in(select book_name from books);
+update books_details set book_price=1700 where book_name in(select book_name from books);
+  select *from books_details;
+  delete from books_details where book_name in(select book_name from books); 
+
+-- user,host from mysql server
+
+create user temp@'localhost';
+
+show grants for temp@'localhost';
+
+grant select,update,delete on books_details to temp@'localhost';
+
+revoke create on books_details from temp@'localhost';
+
 
 
 
