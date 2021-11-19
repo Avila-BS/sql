@@ -49,4 +49,39 @@ select * from customer_details C left join orders O on O.customer_ref=C.customer
 
 select * from customer_details C right join orders O on O.customer_ref=C.customer_id;
 
+select * from customer_details C left join orders O on O.customer_ref=C.customer_id
+UNION ALL
+select * from customer_details C right join orders O on O.customer_ref=C.customer_id;
 
+create table offers(
+offer_id int,
+offer_name VARCHAR(35) NOT NULL,
+offer_percentage decimal check(offer_percentage<40),
+offer_ratings int,
+order_ref int,
+primary key(offer_id),
+foreign key(order_ref) references orders(order_id)
+);
+
+insert into  offers(offer_id,offer_name,offer_percentage,offer_ratings)value(1,'end of year sale',30,5);
+
+select*from offers;
+
+select *from orders cross join offers;
+
+-- view
+
+create view iphone_orders as select*from orders where product_name like 'iphone%';
+select*from iphone_orders;
+
+select*from iphone_orders where order_amount>65000;
+
+alter view iphone_orders as select*from orders where product_name like 'i%';
+select*from iphone_orders;
+
+create view offers_given as select*from orders cross join offers;
+select*from offers_given;
+
+select*from offers_given where order_amount>40000;
+
+drop view offers_given;
